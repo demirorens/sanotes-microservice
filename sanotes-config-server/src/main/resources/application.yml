@@ -1,0 +1,16 @@
+server.port: 8888
+
+spring:
+  profiles:
+    include: native
+  cloud:
+    config:
+      server:
+#        git:
+#          uri: https://github.com/demirorens/sanotes-config-repo
+#          username: github_username
+#          password: github_password
+#          clone-on-start: true
+#          default-label: main
+        native:
+          search-locations: classpath:/config-files

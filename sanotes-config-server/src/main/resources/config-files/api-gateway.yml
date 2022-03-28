@@ -1,0 +1,19 @@
+zuul:
+  prefix: /api
+  ignoredServices: '*'
+  routes:
+    note-service: /note/**
+    notebook-service: /notebook/**
+    tag-service: /tag/**
+    user-service: /user/**
+    api-gateway: /gateway/**
+
+server:
+  port: 8080
+  compression:
+    enabled: true
+    mime-types: application/json,text/css,application/javascript
+    min-response-size: 2048
+
+
+

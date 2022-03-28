@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888/}
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: http://localhost:8090/auth/realms/sanotes/protocol/openid-connect/token/introspect
+          client-id: sanotes-client
+          client-secret: 0e082231-a70d-48e8-b8a5-fbfb743041b6
+  cloud:
+    gateway:
+      routes:
+        - id: note-service
+          uri: lb://note-service
+          predicates:
+            - Path=/api/note/**
+          filters:
+            - StripPrefix=2
+#            - TokenRelay
+        - id: notebook-service
+          uri: lb://notebook-service
+          predicates:
+            - Path=/api/notebook/**
+          filters:
+            - StripPrefix=2
+        - id: tag-service
+          uri: lb://tag-service
+          predicates:
+            - Path=/api/customer/**
+          filters:
+            - StripPrefix=2
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=2

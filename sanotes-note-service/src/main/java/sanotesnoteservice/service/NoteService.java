@@ -1,0 +1,21 @@
+package sanotesnoteservice.service;
+
+import sanotesnoteservice.model.NoteContainerModel;
+import sanotesnoteservice.model.NoteVersionModel;
+import sanotesnoteservice.payload.ApiResponse;
+import sanotesnoteservice.payload.ByIdRequest;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface NoteService {
+    NoteContainerModel saveNote(NoteContainerModel note);
+
+    NoteContainerModel updateNote(NoteContainerModel note);
+
+    NoteContainerModel getNote(UUID id);
+
+    List<NoteVersionModel> getNoteVersions(UUID id);
+
+    ApiResponse deleteNote(ByIdRequest byIdRequest);
+}

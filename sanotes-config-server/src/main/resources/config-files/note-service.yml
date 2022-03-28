@@ -1,0 +1,24 @@
+server:
+  port: 8282
+spring:
+  data:
+    mongodb:
+      database: notes
+      port: 27017
+  datasource:
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+    url: jdbc:postgresql://localhost:5432/sanotes_notedb
+    username: postgres
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+#eureka:
+#  instance:
+    # enable to register multiple app instances with a random server port
+#    instance-id: ${spring.application.name}:${random.uuid}
