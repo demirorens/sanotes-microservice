@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: notebook-service
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888/}
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: http://localhost:8090/auth/realms/sanotes/protocol/openid-connect/token/introspect
+          client-id: sanotes-client
+          client-secret: 0e082231-a70d-48e8-b8a5-fbfb743041b6
+          issuer-uri: http://localhost:8090/auth/realms/sanotes
+
+cors:
+  allowedOrigins: '*'

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sanotesnoteservice.model.NoteContainerModel;
 import sanotesnoteservice.model.NoteVersionModel;
@@ -13,7 +12,6 @@ import sanotesnoteservice.payload.ApiResponse;
 import sanotesnoteservice.payload.ByIdRequest;
 import sanotesnoteservice.payload.NoteRequest;
 import sanotesnoteservice.payload.NoteResponse;
-import sanotesnoteservice.security.CurrentUser;
 import sanotesnoteservice.service.NoteService;
 
 import javax.validation.Valid;
