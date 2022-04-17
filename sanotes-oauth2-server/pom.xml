@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>com.github.thomasdarimont.embedded-spring-boot-keycloak-server</groupId>
 			<artifactId>embedded-keycloak-server-spring-boot-starter</artifactId>
-			<version>7.0.2</version>
+			<version>${embedded-keycloak-starter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

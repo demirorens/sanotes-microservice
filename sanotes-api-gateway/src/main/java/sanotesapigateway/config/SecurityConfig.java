@@ -24,6 +24,7 @@ public class SecurityConfig {
         http.cors().and().csrf().disable()
                 .authorizeExchange()
                 .pathMatchers(HttpMethod.GET, "/actuator/**").permitAll()
+                .pathMatchers(HttpMethod.POST, "/api/user/auth/**").permitAll()
                 .anyExchange().authenticated()
                 .and()
                 .oauth2ResourceServer(oauth2 -> oauth2

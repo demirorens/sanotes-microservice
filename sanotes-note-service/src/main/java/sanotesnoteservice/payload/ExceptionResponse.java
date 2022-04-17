@@ -1,16 +1,14 @@
 package sanotesnoteservice.payload;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 public class ExceptionResponse {
     private String error;

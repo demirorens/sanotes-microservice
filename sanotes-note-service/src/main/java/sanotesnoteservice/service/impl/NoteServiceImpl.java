@@ -1,5 +1,6 @@
 package sanotesnoteservice.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,21 +19,17 @@ import sanotesnoteservice.service.NoteService;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Service
 public class NoteServiceImpl implements NoteService {
 
-    @Autowired
-    private NoteRepository noteRepository;
+    private final NoteRepository noteRepository;
 
-    @Autowired
-    private NoteContainerRepository noteContainerRepository;
+    private final NoteContainerRepository noteContainerRepository;
 
-    @Autowired
-    private NoteVersionRepository noteVersionRepository;
+    private final NoteVersionRepository noteVersionRepository;
 
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     private static final String USER_DONT_HAVE_PERMISSION = "User don't have permission for this request";
 

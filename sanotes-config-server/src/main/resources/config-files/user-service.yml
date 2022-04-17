@@ -1,0 +1,18 @@
+server:
+  port: 8585
+keycloak:
+  auth-server-url: http://localhost:8090/auth
+  realm: sanotes
+  resource: user-service
+  credentials:
+    secret: 0e082231-a70d-48e8-b8a5-fbfb743041b6
+keycloakCustomProps:
+  clientId: sanotes-client
+  admin-user: adminsanotes
+  admin-password: admin123
+
+
+#eureka:
+#  instance:
+    # enable to register multiple app instances with a random server port
+#    instance-id: ${spring.application.name}:${random.uuid}

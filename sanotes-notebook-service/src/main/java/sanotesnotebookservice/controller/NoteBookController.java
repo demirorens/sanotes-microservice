@@ -1,5 +1,6 @@
 package sanotesnotebookservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,22 +17,21 @@ import sanotesnotebookservice.service.NoteBookService;
 import javax.validation.Valid;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping
 public class NoteBookController {
 
-    @Autowired
-    private NoteBookService noteBookService;
+    private final NoteBookService noteBookService;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @GetMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
     public ResponseEntity<NoteBookResponse> getNoteBook(@RequestParam(value = "id") UUID id) {
         NoteBookModel noteBookModel = noteBookService.getNoteBook(id);
         NoteBookResponse noteBookResponse = modelMapper.map(noteBookModel, NoteBookResponse.class);
-        return new ResponseEntity<>(noteBookResponse, HttpStatus.CREATED);
+        return new ResponseEntity<>(noteBookResponse, HttpStatus.OK);
     }
 
     @PostMapping

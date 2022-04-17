@@ -1,11 +1,9 @@
 package sanotesnoteservice.payload;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 public class BooleanResponse {
     private Boolean result;

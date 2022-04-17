@@ -1,6 +1,7 @@
 package sanotesnotebookservice.service.impl;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sanotesnotebookservice.exception.ResourceNotFoundException;
@@ -13,12 +14,11 @@ import sanotesnotebookservice.service.NoteBookService;
 import java.util.Optional;
 import java.util.UUID;
 
-
+@RequiredArgsConstructor
 @Service
 public class NoteBookServiceImpl implements NoteBookService {
 
-    @Autowired
-    private NoteBookRepository noteBookRepository;
+    private final NoteBookRepository noteBookRepository;
 
     private static final String USER_DONT_HAVE_PERMISSION = "User don't have permission for this request";
 

@@ -23,6 +23,13 @@
         <spring-cloud.version>2021.0.1</spring-cloud.version>
         <chaos-monkey-spring-boot.version>2.5.4</chaos-monkey-spring-boot.version>
         <keycloak.version>17.0.0</keycloak.version>
+        <model-mapper.version>3.1.0</model-mapper.version>
+        <jboss-resteasy.version>3.15.3.Final</jboss-resteasy.version>
+        <nimbusds-oauth2-oidc-sdk.version>9.31</nimbusds-oauth2-oidc-sdk.version>
+        <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
+        <jjwt.version>0.9.1</jjwt.version>
+        <spring-boot-admin.version>2.6.3</spring-boot-admin.version>
+        <embedded-keycloak-starter.version>7.0.2</embedded-keycloak-starter.version>
     </properties>
 
     <modules>

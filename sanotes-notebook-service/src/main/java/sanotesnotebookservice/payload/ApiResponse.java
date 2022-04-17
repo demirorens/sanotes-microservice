@@ -3,15 +3,13 @@ package sanotesnotebookservice.payload;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @JsonPropertyOrder({
         "success",

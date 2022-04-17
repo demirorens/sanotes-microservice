@@ -29,7 +29,7 @@ spring:
         - id: tag-service
           uri: lb://tag-service
           predicates:
-            - Path=/api/customer/**
+            - Path=/api/tag/**
           filters:
             - StripPrefix=2
         - id: user-service

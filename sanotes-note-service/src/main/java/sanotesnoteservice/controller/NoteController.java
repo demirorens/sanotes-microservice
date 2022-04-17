@@ -1,5 +1,6 @@
 package sanotesnoteservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,14 +20,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping
 public class NoteController {
 
-    @Autowired
-    NoteService noteService;
-    @Autowired
-    private ModelMapper modelMapper;
+    private final NoteService noteService;
+
+    private final ModelMapper modelMapper;
 
     @PostMapping
     @PreAuthorize("hasAuthority('sanotes_user')")

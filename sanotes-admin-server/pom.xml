@@ -14,10 +14,6 @@
 	<name>sanotes-admin-server</name>
 	<description>Notes App Admin Server</description>
 
-	<properties>
-		<spring-boot-admin.version>2.6.3</spring-boot-admin.version>
-	</properties>
-
 	<dependencies>
 		<!-- Spring Boot -->
 		<dependency>
