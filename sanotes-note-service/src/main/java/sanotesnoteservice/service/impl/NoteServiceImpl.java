@@ -39,6 +39,7 @@ public class NoteServiceImpl implements NoteService {
                 .topic(noteContainerModel.getTopic())
                 .text(noteContainerModel.getText())
                 .build();
+        //TODO: Add User control for ownership. Is notebook owner and user is same
         noteModel = noteRepository.save(noteModel);
         noteContainerModel.setNoteId(noteModel.getId());
         noteContainerModel = noteContainerRepository.save(noteContainerModel);
@@ -51,6 +52,7 @@ public class NoteServiceImpl implements NoteService {
         UUID noteId = noteContainerModel.getId();
         NoteContainerModel oldNoteContainerModel = noteContainerRepository.findById(noteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", noteId.toString()));
+        //TODO: Add User control for ownership. Is notebook owner and user is same
         TypeMap<NoteContainerModel, NoteVersionModel> propertyMapper =
                 modelMapper.createTypeMap(NoteContainerModel.class, NoteVersionModel.class);
         propertyMapper.addMapping(NoteContainerModel::getId, NoteVersionModel::setNoteContainerId);
@@ -76,6 +78,7 @@ public class NoteServiceImpl implements NoteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", id.toString()));
         NoteModel noteModel = noteRepository.findById(noteContainerModel.getNoteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", id.toString()));
+        //TODO: Add User control for ownership. Is notebook owner and user is same
         noteContainerModel.setNoteId(noteModel.getId());
         noteContainerModel.setTopic(noteModel.getTopic());
         noteContainerModel.setText(noteModel.getText());
@@ -84,6 +87,7 @@ public class NoteServiceImpl implements NoteService {
 
     public List<NoteVersionModel> getNoteVersions(UUID id) {
         List<NoteVersionModel> noteVersionModels = noteVersionRepository.findByNoteContainerIdEquals(id);
+        //TODO: Add User control for ownership. Is notebook owner and user is same
         return noteVersionModels;
     }
 
@@ -91,6 +95,7 @@ public class NoteServiceImpl implements NoteService {
     public ApiResponse deleteNote(ByIdRequest byIdRequest) {
         NoteContainerModel noteContainerModel = noteContainerRepository.findById(byIdRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", byIdRequest.getId().toString()));
+        //TODO: Add User control for ownership. Is notebook owner and user is same
         noteContainerRepository.delete(noteContainerModel);
         NoteModel noteModel = NoteModel.builder().id(noteContainerModel.getNoteId()).build();
         noteRepository.delete(noteModel);

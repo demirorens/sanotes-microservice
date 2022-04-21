@@ -2,16 +2,17 @@ package sanotesnotebookservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sanotesnotebookservice.model.NoteBookModel;
 import sanotesnotebookservice.payload.ApiResponse;
 import sanotesnotebookservice.payload.ByIdRequest;
 import sanotesnotebookservice.payload.NoteBookRequest;
 import sanotesnotebookservice.payload.NoteBookResponse;
+import sanotesnotebookservice.security.CurrentUser;
 import sanotesnotebookservice.service.NoteBookService;
 
 import javax.validation.Valid;
@@ -28,8 +29,9 @@ public class NoteBookController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<NoteBookResponse> getNoteBook(@RequestParam(value = "id") UUID id) {
-        NoteBookModel noteBookModel = noteBookService.getNoteBook(id);
+    public ResponseEntity<NoteBookResponse> getNoteBook(@RequestParam(value = "id") UUID id,
+                                                        @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+        NoteBookModel noteBookModel = noteBookService.getNoteBook(id, userPrincipal.getName());
         NoteBookResponse noteBookResponse = modelMapper.map(noteBookModel, NoteBookResponse.class);
         return new ResponseEntity<>(noteBookResponse, HttpStatus.OK);
     }
@@ -45,9 +47,10 @@ public class NoteBookController {
 
     @PutMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<NoteBookResponse> updateNoteBook(@Valid @RequestBody NoteBookRequest noteBook) {
+    public ResponseEntity<NoteBookResponse> updateNoteBook(@Valid @RequestBody NoteBookRequest noteBook,
+                                                           @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         NoteBookModel noteBookModel = modelMapper.map(noteBook, NoteBookModel.class);
-        noteBookModel = noteBookService.updateNoteBook(noteBookModel);
+        noteBookModel = noteBookService.updateNoteBook(noteBookModel, userPrincipal.getName());
         NoteBookResponse noteBookResponse = modelMapper.map(noteBookModel, NoteBookResponse.class);
         return new ResponseEntity<>(noteBookResponse, HttpStatus.CREATED);
     }
@@ -55,8 +58,9 @@ public class NoteBookController {
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<ApiResponse> deleteNoteBook(@Valid @RequestBody ByIdRequest byIdRequest) {
-        ApiResponse apiResponse = noteBookService.deleteNoteBook(byIdRequest);
+    public ResponseEntity<ApiResponse> deleteNoteBook(@Valid @RequestBody ByIdRequest byIdRequest,
+                                                      @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+        ApiResponse apiResponse = noteBookService.deleteNoteBook(byIdRequest, userPrincipal.getName());
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 

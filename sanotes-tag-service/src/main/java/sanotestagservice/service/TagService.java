@@ -11,9 +11,9 @@ public interface TagService {
 
     TagModel saveTag(TagModel tagModel);
 
-    TagModel updateTag(TagModel tagModel);
+    TagModel updateTag(TagModel tagModel, String userId);
 
-    TagModel getTag(UUID id);
+    TagModel getTag(UUID id, String userId);
 
-    ApiResponse deleteTag(ByIdRequest byIdRequest);
+    ApiResponse deleteTag(ByIdRequest byIdRequest, String userId);
 }

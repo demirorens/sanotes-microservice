@@ -11,9 +11,9 @@ public interface NoteBookService {
 
     NoteBookModel saveNoteBook(NoteBookModel noteBookModel);
 
-    NoteBookModel updateNoteBook(NoteBookModel noteBookModel);
+    NoteBookModel updateNoteBook(NoteBookModel noteBookModel, String userId);
 
-    ApiResponse deleteNoteBook(ByIdRequest byIdRequest);
+    ApiResponse deleteNoteBook(ByIdRequest byIdRequest, String userId);
 
-    NoteBookModel getNoteBook(UUID id);
+    NoteBookModel getNoteBook(UUID id, String userId);
 }

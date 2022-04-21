@@ -1,9 +1,9 @@
 package sanotestagservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sanotestagservice.exception.ResourceNotFoundException;
+import sanotestagservice.exception.UnauthorizedException;
 import sanotestagservice.model.TagModel;
 import sanotestagservice.payload.ApiResponse;
 import sanotestagservice.payload.ByIdRequest;
@@ -24,23 +24,29 @@ public class TagServiceImpl implements TagService {
         return tagRepository.save(tagModel);
     }
 
-    public TagModel updateTag(TagModel tagModel) {
+    public TagModel updateTag(TagModel tagModel, String userId) {
         TagModel oldTagModel = tagRepository.findById(tagModel.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tag", "by id", tagModel.getId().toString()));
+        if (!oldTagModel.getCreatedBy().toString().equals(userId))
+            throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         oldTagModel.setName(tagModel.getName());
         oldTagModel.setDescription(tagModel.getDescription());
         return tagRepository.save(oldTagModel);
     }
 
-    public TagModel getTag(UUID id) {
+    public TagModel getTag(UUID id, String userId) {
         TagModel tag = tagRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tag", "by id", id.toString()));
+        if (!tag.getCreatedBy().toString().equals(userId))
+            throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         return tag;
     }
 
-    public ApiResponse deleteTag(ByIdRequest byIdRequest) {
+    public ApiResponse deleteTag(ByIdRequest byIdRequest, String userId) {
         TagModel tag = tagRepository.findById(byIdRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tag", "by id", byIdRequest.getId().toString()));
+        if (!tag.getCreatedBy().toString().equals(userId))
+            throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         tagRepository.delete(tag);
         return new ApiResponse(Boolean.TRUE, "You successfully delete tag ");
     }
