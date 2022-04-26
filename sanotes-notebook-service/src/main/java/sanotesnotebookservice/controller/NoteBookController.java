@@ -8,10 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sanotesnotebookservice.model.NoteBookModel;
-import sanotesnotebookservice.payload.ApiResponse;
-import sanotesnotebookservice.payload.ByIdRequest;
-import sanotesnotebookservice.payload.NoteBookRequest;
-import sanotesnotebookservice.payload.NoteBookResponse;
+import sanotesnotebookservice.payload.*;
 import sanotesnotebookservice.security.CurrentUser;
 import sanotesnotebookservice.service.NoteBookService;
 
@@ -62,6 +59,19 @@ public class NoteBookController {
                                                       @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         ApiResponse apiResponse = noteBookService.deleteNoteBook(byIdRequest, userPrincipal.getName());
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/owner/{noteBookId}")
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public ResponseEntity<BooleanResponse> isNoteBookOwner(@PathVariable("noteBookId") UUID id,
+                                                           @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+        BooleanResponse booleanResponse = new BooleanResponse(true);
+        try {
+            NoteBookModel noteBookModel = noteBookService.getNoteBook(id, userPrincipal.getName());
+        } catch (Exception ue) {
+            booleanResponse.setResult(false);
+        }
+        return new ResponseEntity<>(booleanResponse, HttpStatus.OK);
     }
 
 

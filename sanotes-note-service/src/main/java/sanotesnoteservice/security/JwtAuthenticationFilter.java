@@ -24,10 +24,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String token = getJwtFromRequest(request);
-            if (token != null && !token.isEmpty()) {
-                OAuth2AuthenticatedPrincipal principal = introspector.introspect(token);
-                //System.out.println("TOKEN: " + token);
-            }
+//            if (token != null && !token.isEmpty()) {
+//                OAuth2AuthenticatedPrincipal principal = introspector.introspect(token);
+//                System.out.println("TOKEN: " + token);
+//            }
         } catch (Exception e) {
             LOGGER.error("Could not set user authentication in security context", e);
         }

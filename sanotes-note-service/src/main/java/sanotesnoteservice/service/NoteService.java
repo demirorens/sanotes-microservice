@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.UUID;
 
 public interface NoteService {
-    NoteContainerModel saveNote(NoteContainerModel note);
+    NoteContainerModel saveNote(NoteContainerModel note, String userId);
 
-    NoteContainerModel updateNote(NoteContainerModel note);
+    NoteContainerModel updateNote(NoteContainerModel note, String userId);
 
-    NoteContainerModel getNote(UUID id);
+    NoteContainerModel getNote(UUID id, String userId);
 
-    List<NoteVersionModel> getNoteVersions(UUID id);
+    List<NoteVersionModel> getNoteVersions(UUID id, String userId);
 
-    ApiResponse deleteNote(ByIdRequest byIdRequest);
+    ApiResponse deleteNote(ByIdRequest byIdRequest, String userId);
 }
