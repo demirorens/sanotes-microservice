@@ -2,7 +2,6 @@ package sanotesnoteservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -77,5 +76,22 @@ public class NoteController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/bynotebookid")
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public ResponseEntity<List<NoteResponse>> getNotesByNoteBookId(@RequestParam(value = "id") UUID id,
+                                                                   @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+        List<NoteContainerModel> noteContainerModels = noteService.getNotesByNoteBookId(id, userPrincipal.getName());
+        List<NoteResponse> noteResponses = Arrays.asList(modelMapper.map(noteContainerModels, NoteResponse[].class));
+        return new ResponseEntity<>(noteResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/bytagid")
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public ResponseEntity<List<NoteResponse>> getNotesByTagId(@RequestParam(value = "id") UUID id,
+                                                              @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+        List<NoteContainerModel> noteContainerModels = noteService.getNotesByTagId(id, userPrincipal.getName());
+        List<NoteResponse> noteResponses = Arrays.asList(modelMapper.map(noteContainerModels, NoteResponse[].class));
+        return new ResponseEntity<>(noteResponses, HttpStatus.OK);
+    }
 
 }

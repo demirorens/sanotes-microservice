@@ -18,4 +18,8 @@ public interface NoteService {
     List<NoteVersionModel> getNoteVersions(UUID id, String userId);
 
     ApiResponse deleteNote(ByIdRequest byIdRequest, String userId);
+
+    List<NoteContainerModel> getNotesByNoteBookId(UUID id, String userId);
+
+    List<NoteContainerModel> getNotesByTagId(UUID id, String userId);
 }

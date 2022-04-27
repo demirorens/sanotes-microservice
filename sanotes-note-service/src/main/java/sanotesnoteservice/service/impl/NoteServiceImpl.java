@@ -117,4 +117,23 @@ public class NoteServiceImpl implements NoteService {
         noteRepository.delete(noteModel);
         return new ApiResponse(Boolean.TRUE, "You successfully delete note ");
     }
+
+    public List<NoteContainerModel> getNotesByNoteBookId(UUID id, String userId) {
+        List<NoteContainerModel> noteContainerModel = noteContainerRepository.findByNoteBookIdEquals(id);
+        if (!noteContainerModel.isEmpty()) {
+            BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.get(0).getNoteBookId().toString());
+            if (!booleanResponse.getResult())
+                throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
+        }
+        return noteContainerModel;
+    }
+    public List<NoteContainerModel> getNotesByTagId(UUID id, String userId) {
+        List<NoteContainerModel> noteContainerModel = noteContainerRepository.getByTagId(id);
+        if (!noteContainerModel.isEmpty()) {
+            BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.get(0).getNoteBookId().toString());
+            if (!booleanResponse.getResult())
+                throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
+        }
+        return noteContainerModel;
+    }
 }
