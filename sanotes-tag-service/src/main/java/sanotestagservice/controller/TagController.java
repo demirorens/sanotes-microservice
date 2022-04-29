@@ -16,6 +16,8 @@ import sanotestagservice.security.CurrentUser;
 import sanotestagservice.service.TagService;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -53,6 +55,14 @@ public class TagController {
         TagModel tagModel = tagService.getTag(id, userPrincipal.getName());
         TagResponse tagResponse = modelMapper.map(tagModel, TagResponse.class);
         return new ResponseEntity<>(tagResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/usertags")
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public ResponseEntity<List<TagResponse>> getUserTags(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+        List<TagModel> tags = tagService.getUserTags(userPrincipal.getName());
+        List<TagResponse> tagResponses = Arrays.asList(modelMapper.map(tags, TagResponse[].class));
+        return new ResponseEntity<>(tagResponses, HttpStatus.OK);
     }
 
     @DeleteMapping

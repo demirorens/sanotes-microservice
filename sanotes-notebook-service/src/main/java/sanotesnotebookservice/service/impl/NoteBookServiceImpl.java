@@ -11,6 +11,7 @@ import sanotesnotebookservice.payload.ByIdRequest;
 import sanotesnotebookservice.repository.NoteBookRepository;
 import sanotesnotebookservice.service.NoteBookService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -50,6 +51,11 @@ public class NoteBookServiceImpl implements NoteBookService {
         if (!noteBookModel.getCreatedBy().toString().equals(userId))
             throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         return noteBookModel;
+    }
+
+    public List<NoteBookModel> getUserNoteBooks(String userId) {
+        List<NoteBookModel> noteBookModels = noteBookRepository.findByCreatedByEquals(UUID.fromString(userId));
+        return noteBookModels;
     }
 
 }

@@ -13,6 +13,8 @@ import sanotesnotebookservice.security.CurrentUser;
 import sanotesnotebookservice.service.NoteBookService;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -31,6 +33,14 @@ public class NoteBookController {
         NoteBookModel noteBookModel = noteBookService.getNoteBook(id, userPrincipal.getName());
         NoteBookResponse noteBookResponse = modelMapper.map(noteBookModel, NoteBookResponse.class);
         return new ResponseEntity<>(noteBookResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/usernotebooks")
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public ResponseEntity<List<NoteBookResponse>> getUserNoteBooks(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+        List<NoteBookModel> noteBooks = noteBookService.getUserNoteBooks(userPrincipal.getName());
+        List<NoteBookResponse> noteBookResponses = Arrays.asList(modelMapper.map(noteBooks, NoteBookResponse[].class));
+        return new ResponseEntity<>(noteBookResponses, HttpStatus.OK);
     }
 
     @PostMapping

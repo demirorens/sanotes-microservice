@@ -10,4 +10,8 @@ import java.util.UUID;
 public interface NoteBookRepository extends CrudRepository<NoteBookModel, UUID> {
     @Query("select n from NoteBookModel n where n.name = ?1")
     List<NoteBookModel> findByName(String name);
+
+    List<NoteBookModel> findByCreatedByEquals(UUID createdBy);
+
+
 }

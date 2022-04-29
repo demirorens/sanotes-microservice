@@ -10,6 +10,7 @@ import sanotestagservice.payload.ByIdRequest;
 import sanotestagservice.repository.TagRepository;
 import sanotestagservice.service.TagService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -40,6 +41,12 @@ public class TagServiceImpl implements TagService {
         if (!tag.getCreatedBy().toString().equals(userId))
             throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         return tag;
+    }
+
+    @Override
+    public List<TagModel> getUserTags(String userId) {
+        List<TagModel> tags = tagRepository.findByCreatedByEquals(UUID.fromString(userId));
+        return tags;
     }
 
     public ApiResponse deleteTag(ByIdRequest byIdRequest, String userId) {

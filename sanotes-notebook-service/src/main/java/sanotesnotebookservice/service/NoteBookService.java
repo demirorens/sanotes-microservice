@@ -5,6 +5,7 @@ import sanotesnotebookservice.model.NoteBookModel;
 import sanotesnotebookservice.payload.ApiResponse;
 import sanotesnotebookservice.payload.ByIdRequest;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface NoteBookService {
@@ -16,4 +17,6 @@ public interface NoteBookService {
     ApiResponse deleteNoteBook(ByIdRequest byIdRequest, String userId);
 
     NoteBookModel getNoteBook(UUID id, String userId);
+
+    List<NoteBookModel> getUserNoteBooks(String userId);
 }

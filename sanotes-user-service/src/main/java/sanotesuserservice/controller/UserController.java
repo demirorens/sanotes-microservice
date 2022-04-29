@@ -6,9 +6,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sanotesuserservice.model.UserModel;
 import sanotesuserservice.payload.*;
+import sanotesuserservice.security.CurrentUser;
 import sanotesuserservice.service.UserService;
 
 import java.util.Arrays;
@@ -46,6 +48,14 @@ public class UserController {
     public ResponseEntity<UserDetailResponse> getUserById(@PathVariable("userId") String userId) {
         UserRepresentation user = userService.getUserById(userId);
         UserDetailResponse userResponse = modelMapper.map(user, UserDetailResponse.class);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public ResponseEntity<UserResponse> getSelf(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+        UserRepresentation user = userService.getUserById(userPrincipal.getName());
+        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
