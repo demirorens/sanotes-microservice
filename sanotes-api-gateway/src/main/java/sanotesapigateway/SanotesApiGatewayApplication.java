@@ -10,10 +10,8 @@ import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigB
 import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.oauth2.server.resource.introspection.NimbusReactiveOpaqueTokenIntrospector;
 import org.springframework.security.oauth2.server.resource.introspection.ReactiveOpaqueTokenIntrospector;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import sanotesapigateway.config.KeycloakReactiveTokenInstrospector;
 
@@ -26,11 +24,6 @@ public class SanotesApiGatewayApplication {
         SpringApplication.run(SanotesApiGatewayApplication.class, args);
     }
 
-    @Bean
-    @LoadBalanced
-    RestTemplate loadBalancedRestTemplate() {
-        return new RestTemplate();
-    }
 
     @Bean
     @LoadBalanced

@@ -1,3 +1,6 @@
+server:
+  max-http-header-size: 10MB
+  max-header-count: 200
 spring:
   application:
     name: notebook-service

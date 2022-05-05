@@ -13,18 +13,26 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Enumeration;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     @Autowired
     private OpaqueTokenIntrospector introspector;
+
     // Filter to use incase of need
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
+
             String token = getJwtFromRequest(request);
             if (token != null && !token.isEmpty()) {
+                Enumeration<String> stringEnumeration = request.getHeaderNames();
+                while (stringEnumeration.hasMoreElements()) {
+                    String s = stringEnumeration.nextElement();
+                    System.out.println(s + " : " + request.getHeader(s));
+                }
                 OAuth2AuthenticatedPrincipal principal = introspector.introspect(token);
 //                System.out.println("TOKEN: " + token);
             }

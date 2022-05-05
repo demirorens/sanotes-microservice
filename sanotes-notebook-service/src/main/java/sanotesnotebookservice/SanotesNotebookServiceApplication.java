@@ -1,9 +1,12 @@
 package sanotesnotebookservice;
 
+import org.apache.catalina.connector.Connector;
+import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.oauth2.server.resource.introspection.NimbusOpaqueTokenIntrospector;
@@ -18,34 +21,46 @@ import java.util.TimeZone;
 @SpringBootApplication
 public class SanotesNotebookServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SanotesNotebookServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SanotesNotebookServiceApplication.class, args);
+    }
 
-	@PostConstruct
-	void init() {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-	}
+    @Bean
+    public TomcatServletWebServerFactory containerFactory() {
+        return new TomcatServletWebServerFactory() {
+            protected void customizeConnector(Connector connector) {
+                super.customizeConnector(connector);
+                if (connector.getProtocolHandler() instanceof AbstractHttp11Protocol) {
+                    ((AbstractHttp11Protocol<?>) connector.getProtocolHandler()).setMaxHeaderCount(300);
+                }
+            }
+        };
+    }
 
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
+    @PostConstruct
+    void init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
 
-	@Bean
-	public JwtAuthenticationFilter jwtAuthenticationFilter() {
-		return new JwtAuthenticationFilter();
-	}
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
-	@Bean
-	public OpaqueTokenIntrospector keycloakIntrospector(OAuth2ResourceServerProperties props) {
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
 
-		NimbusOpaqueTokenIntrospector delegate = new NimbusOpaqueTokenIntrospector(
-				props.getOpaquetoken().getIntrospectionUri(),
-				props.getOpaquetoken().getClientId(),
-				props.getOpaquetoken().getClientSecret());
+    @Bean
+    public OpaqueTokenIntrospector keycloakIntrospector(OAuth2ResourceServerProperties props) {
 
-		return new KeycloakTokenInstrospector(delegate);
-	}
+        NimbusOpaqueTokenIntrospector delegate = new NimbusOpaqueTokenIntrospector(
+                props.getOpaquetoken().getIntrospectionUri(),
+                props.getOpaquetoken().getClientId(),
+                props.getOpaquetoken().getClientSecret());
+
+        return new KeycloakTokenInstrospector(delegate);
+    }
 
 }

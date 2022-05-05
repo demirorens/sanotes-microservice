@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Enumeration;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
@@ -24,10 +25,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String token = getJwtFromRequest(request);
-//            if (token != null && !token.isEmpty()) {
-//                OAuth2AuthenticatedPrincipal principal = introspector.introspect(token);
+            if (token != null && !token.isEmpty()) {
+                Enumeration<String> stringEnumeration = request.getHeaderNames();
+                while (stringEnumeration.hasMoreElements()) {
+                    String s = stringEnumeration.nextElement();
+                    System.out.println(s + " : " + request.getHeader(s));
+                }
+                OAuth2AuthenticatedPrincipal principal = introspector.introspect(token);
 //                System.out.println("TOKEN: " + token);
-//            }
+            }
         } catch (Exception e) {
             LOGGER.error("Could not set user authentication in security context", e);
         }
