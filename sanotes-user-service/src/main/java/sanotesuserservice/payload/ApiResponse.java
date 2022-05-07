@@ -15,7 +15,7 @@ import java.io.Serializable;
         "success",
         "message"
 })
-public class ApiResponse implements Serializable {
+public class ApiResponse extends FallBackResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("success")

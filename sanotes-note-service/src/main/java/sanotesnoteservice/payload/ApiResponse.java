@@ -15,7 +15,7 @@ import java.io.Serializable;
         "success",
         "message"
 })
-public class ApiResponse implements Serializable {
+public class ApiResponse extends FallBackResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("success")
@@ -32,10 +32,8 @@ public class ApiResponse implements Serializable {
         this.message = message;
     }
 
-    public ApiResponse(Boolean success, String message, HttpStatus status) {
-        this.success = success;
-        this.message = message;
-        this.status = status;
+    public ApiResponse(String message) {
+        this.setFallbackMessage(message);
     }
 
 }

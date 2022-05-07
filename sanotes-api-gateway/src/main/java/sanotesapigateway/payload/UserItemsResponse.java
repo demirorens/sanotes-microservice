@@ -3,13 +3,12 @@ package sanotesapigateway.payload;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class UserItemsResponse {
+public class UserItemsResponse extends FallBackResponse {
     private String id;
     private String firstname;
     private String lastname;
@@ -17,4 +16,8 @@ public class UserItemsResponse {
     private String email;
     private List<NoteBookResponse> noteBooks;
     private List<TagResponse> tags;
+
+    public UserItemsResponse(String fallbackMessage) {
+        super(fallbackMessage);
+    }
 }

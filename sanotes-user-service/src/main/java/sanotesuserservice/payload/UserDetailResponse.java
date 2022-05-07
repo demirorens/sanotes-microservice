@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
-public class UserDetailResponse {
+public class UserDetailResponse extends FallBackResponse{
     protected String self;
     protected String id;
     protected String origin;

@@ -22,6 +22,14 @@ public class ResourceNotFoundException extends RuntimeException {
         apiResponse = new ApiResponse(Boolean.FALSE, message);
     }
 
+    public ResourceNotFoundException(String fallbackMsg) {
+        super();
+        this.resourceName = "";
+        this.fieldName = "";
+        this.fieldValue = new Object();
+        apiResponse = new ApiResponse(fallbackMsg);
+    }
+
     public ApiResponse getApiResponse() {
         return apiResponse;
     }

@@ -1,6 +1,9 @@
 package sanotesapigateway.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
@@ -14,10 +17,11 @@ import sanotesapigateway.client.NoteServiceClient;
 import sanotesapigateway.client.TagServiceClient;
 import sanotesapigateway.client.UserServiceClient;
 import sanotesapigateway.config.CurrentUser;
-import sanotesapigateway.payload.NoteBookResponse;
-import sanotesapigateway.payload.TagResponse;
-import sanotesapigateway.payload.UserItemsResponse;
+import sanotesapigateway.payload.*;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -33,16 +37,43 @@ public class ApiGatewayController {
 
     private final UserServiceClient userServiceClient;
 
+    private final ReactiveCircuitBreakerFactory cbFactory;
+
     @GetMapping("useritems")
+    @PreAuthorize("hasAuthority('sanotes_user')")
     public Mono<UserItemsResponse> getUserItems(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
 
-        Mono<UserItemsResponse> userItemsResponse = userServiceClient.getUser();
-        Mono<List<TagResponse>> tags = tagServiceClient.getUserTags();
-        Mono<List<NoteBookResponse>> noteBooks = noteBookServiceClient.getUserNoteBooks();
+        Mono<UserItemsResponse> userItemsResponse = userServiceClient.getUser()
+                .transform(it -> {
+                    ReactiveCircuitBreaker cb = cbFactory.create("userServiceCB");
+                    return cb.run(it,
+                            throwable -> Mono.just(new UserItemsResponse("User service can not respond at the moment please try again later." + getTime())));
+                });
+        Mono<List<TagResponse>> tags = tagServiceClient.getUserTags()
+                .transform(it -> {
+                    ReactiveCircuitBreaker cb = cbFactory.create("tagServiceCB");
+                    ArrayList<TagResponse> fallBack = new ArrayList<>();
+                    fallBack.add(new TagResponse("Tag service can not respond at the moment please try again later." + getTime()));
+                    return cb.run(it,
+                            throwable -> Mono.just(fallBack));
+                });
+        Mono<List<NoteBookResponse>> noteBooks = noteBookServiceClient.getUserNoteBooks()
+                .transform(it -> {
+                    ReactiveCircuitBreaker cb = cbFactory.create("noteBookServiceCB");
+                    ArrayList<NoteBookResponse> fallBack = new ArrayList<>();
+                    fallBack.add(new NoteBookResponse("Note Book service can not respond at the moment please try again later." + getTime()));
+                    return cb.run(it, throwable -> Mono.just(fallBack));
+                });
         noteBooks = noteBooks.flatMapMany(noteBookResponses -> {
             return Flux.fromIterable(noteBookResponses)
                     .flatMap(noteBookResponse -> {
-                        return noteServiceClient.getNoteBookNotes(noteBookResponse.getId().toString())
+                        return noteServiceClient.getNoteBookNotes(noteBookResponse.getId()==null? "": noteBookResponse.getId().toString())
+                                .transform(it -> {
+                                    ReactiveCircuitBreaker cb = cbFactory.create("noteServiceCB");
+                                    ArrayList<NoteResponse> fallBack = new ArrayList<>();
+                                    fallBack.add(new NoteResponse("Note service can not respond at the moment please try again later." + getTime()));
+                                    return cb.run(it, throwable -> Mono.just(fallBack));
+                                })
                                 .zipWith(Mono.just(noteBookResponse)).map(tuple -> {
                                     var result = tuple.getT2();
                                     result.setNotes(tuple.getT1());
@@ -79,5 +110,33 @@ public class ApiGatewayController {
     public Mono<String> getAuthentication(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(ctx -> ((AbstractOAuth2TokenAuthenticationToken) ctx.getAuthentication()).getToken().getTokenValue());
+    }
+
+    private String getTime() {
+        return new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()).toString();
+    }
+
+    @RequestMapping("user-fallback")
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public Mono<FallBackResponse> getUserFallback() {
+        return Mono.just(new FallBackResponse("User service can not respond at the moment please try again later." + getTime()));
+    }
+
+    @RequestMapping("note-fallback")
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public Mono<FallBackResponse> getNoteFallback() {
+        return Mono.just(new FallBackResponse("Note service can not respond at the moment please try again later." + getTime()));
+    }
+
+    @RequestMapping("notebook-fallback")
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public Mono<FallBackResponse> getNoteBookFallback() {
+        return Mono.just(new FallBackResponse("Note Book service can not respond at the moment please try again later." + getTime()));
+    }
+
+    @RequestMapping("tag-fallback")
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public Mono<FallBackResponse> getTagFallback() {
+        return Mono.just(new FallBackResponse("Tag service can not respond at the moment please try again later." + getTime()));
     }
 }

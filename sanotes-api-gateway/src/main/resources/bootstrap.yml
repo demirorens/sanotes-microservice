@@ -19,22 +19,37 @@ spring:
             - Path=/api/note/**
           filters:
             - StripPrefix=2
-#            - TokenRelay
+            - name: CircuitBreaker
+              args:
+                name: notesServiceCB
+                fallbackUri: forward:/api/gateway/note-fallback
         - id: notebook-service
           uri: lb://notebook-service
           predicates:
             - Path=/api/notebook/**
           filters:
             - StripPrefix=2
+            - name: CircuitBreaker
+              args:
+                name: noteBookServiceCB
+                fallbackUri: forward:/api/gateway/notebook-fallback
         - id: tag-service
           uri: lb://tag-service
           predicates:
             - Path=/api/tag/**
           filters:
             - StripPrefix=2
+            - name: CircuitBreaker
+              args:
+                name: tagServiceCB
+                fallbackUri: forward:/api/gateway/tag-fallback
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/api/user/**
           filters:
             - StripPrefix=2
+            - name: CircuitBreaker
+              args:
+                name: userServiceCB
+                fallbackUri: forward:/api/gateway/user-fallback

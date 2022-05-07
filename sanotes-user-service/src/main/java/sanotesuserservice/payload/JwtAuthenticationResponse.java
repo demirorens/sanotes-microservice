@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-public class JwtAuthenticationResponse {
+public class JwtAuthenticationResponse extends FallBackResponse{
 
     @JsonProperty("access_token")
     protected String token;

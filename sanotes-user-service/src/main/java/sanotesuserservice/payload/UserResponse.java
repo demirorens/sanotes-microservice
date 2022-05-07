@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class UserResponse {
+public class UserResponse extends FallBackResponse{
     private String id;
     private String firstname;
     private String lastname;

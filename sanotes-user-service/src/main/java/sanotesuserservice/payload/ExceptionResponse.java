@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class ExceptionResponse {
+public class ExceptionResponse extends FallBackResponse{
     private String error;
     private Integer status;
     private List<String> messages;

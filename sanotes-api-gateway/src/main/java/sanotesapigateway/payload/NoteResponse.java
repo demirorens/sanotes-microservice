@@ -13,7 +13,7 @@ import java.util.UUID;
 @JsonIdentityInfo(scope = NoteResponse.class,
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-public class NoteResponse {
+public class NoteResponse extends FallBackResponse {
 
     private UUID id;
     private String noteId;
@@ -23,5 +23,8 @@ public class NoteResponse {
     private UUID noteBookId;
     private List<UUID> tags;
 
+    public NoteResponse(String fallbackMessage) {
+        super(fallbackMessage);
+    }
 
 }

@@ -30,6 +30,16 @@ public class NoteController {
 
     private final ModelMapper modelMapper;
 
+    @GetMapping("/cbtest/{num}")
+    @PreAuthorize("hasAuthority('sanotes_user')")
+    public ResponseEntity<String> getcbTest(@PathVariable(value = "num") int num,
+                                            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) throws InterruptedException {
+        if (num == 1) {
+            Thread.sleep(500);
+        }
+        return new ResponseEntity<>("cbTest", HttpStatus.OK);
+    }
+
     @PostMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
     public ResponseEntity<NoteResponse> addNote(@Valid @RequestBody NoteRequest noteRequest,

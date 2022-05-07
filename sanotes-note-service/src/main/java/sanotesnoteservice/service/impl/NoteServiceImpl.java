@@ -44,6 +44,8 @@ public class NoteServiceImpl implements NoteService {
                 .text(noteContainerModel.getText())
                 .build();
         BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
+        if (booleanResponse.getResult() == null)
+            throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
         if (!booleanResponse.getResult())
             throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         noteModel = noteRepository.save(noteModel);
@@ -59,6 +61,8 @@ public class NoteServiceImpl implements NoteService {
         NoteContainerModel oldNoteContainerModel = noteContainerRepository.findById(noteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", noteId.toString()));
         BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
+        if (booleanResponse.getResult() == null)
+            throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
         if (!booleanResponse.getResult())
             throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         TypeMap<NoteContainerModel, NoteVersionModel> propertyMapper =
@@ -87,6 +91,8 @@ public class NoteServiceImpl implements NoteService {
         NoteModel noteModel = noteRepository.findById(noteContainerModel.getNoteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", id.toString()));
         BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
+        if (booleanResponse.getResult() == null)
+            throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
         if (!booleanResponse.getResult())
             throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         noteContainerModel.setNoteId(noteModel.getId());
@@ -99,6 +105,8 @@ public class NoteServiceImpl implements NoteService {
         List<NoteVersionModel> noteVersionModels = noteVersionRepository.findByNoteContainerIdEquals(id);
         if (!noteVersionModels.isEmpty()) {
             BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteVersionModels.get(0).getNoteBookId().toString());
+            if (booleanResponse.getResult() == null)
+                throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
             if (!booleanResponse.getResult())
                 throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         }
@@ -110,6 +118,8 @@ public class NoteServiceImpl implements NoteService {
         NoteContainerModel noteContainerModel = noteContainerRepository.findById(byIdRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", byIdRequest.getId().toString()));
         BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
+        if (booleanResponse.getResult() == null)
+            throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
         if (!booleanResponse.getResult())
             throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         noteContainerRepository.delete(noteContainerModel);
@@ -122,15 +132,20 @@ public class NoteServiceImpl implements NoteService {
         List<NoteContainerModel> noteContainerModel = noteContainerRepository.findByNoteBookIdEquals(id);
         if (!noteContainerModel.isEmpty()) {
             BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.get(0).getNoteBookId().toString());
+            if (booleanResponse.getResult() == null)
+                throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
             if (!booleanResponse.getResult())
                 throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         }
         return noteContainerModel;
     }
+
     public List<NoteContainerModel> getNotesByTagId(UUID id, String userId) {
         List<NoteContainerModel> noteContainerModel = noteContainerRepository.getByTagId(id);
         if (!noteContainerModel.isEmpty()) {
             BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.get(0).getNoteBookId().toString());
+            if (booleanResponse.getResult() == null)
+                throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
             if (!booleanResponse.getResult())
                 throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
         }

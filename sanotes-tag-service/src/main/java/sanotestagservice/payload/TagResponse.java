@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class TagResponse {
+public class TagResponse extends FallBackResponse{
     private UUID id;
     private String name;
     private String description;
