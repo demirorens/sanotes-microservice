@@ -1,5 +1,6 @@
 package sanotesnoteservice.exeption;
 
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -54,6 +55,15 @@ public class SAExceptionHandler {
 
         return new ResponseEntity<>(apiResponse, HttpStatus.FORBIDDEN);
     }
+
+//    @ExceptionHandler(FeignException.class)
+//    @ResponseBody
+//    public ResponseEntity<ApiResponse> resolveException(FeignException exception) {
+//        ApiResponse apiResponse = new ApiResponse();
+//        apiResponse.setSuccess(false);
+//        apiResponse.setMessage(exception.getCause().getLocalizedMessage());
+//        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+//    }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseBody

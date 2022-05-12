@@ -3,11 +3,16 @@ package sanotesnoteservice.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import sanotesnoteservice.payload.BooleanResponse;
+import sanotesnoteservice.payload.TagResponse;
 
 @FeignClient(name = "api-gateway")
-public interface NoteBookClient {
+public interface ApiGatewayClient {
 
     @GetMapping("/api/notebook/owner/{noteBookId}")
     BooleanResponse getIsUserOwner(@PathVariable("noteBookId") String noteBookId);
+
+    @GetMapping("/api/tag")
+    TagResponse getTag(@RequestParam("id") String tagId);
 }

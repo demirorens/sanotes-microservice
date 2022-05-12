@@ -1,10 +1,9 @@
 package sanotesnoteservice.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Service;
-import sanotesnoteservice.client.NoteBookClient;
+import sanotesnoteservice.client.ApiGatewayClient;
 import sanotesnoteservice.exeption.ResourceNotFoundException;
 import sanotesnoteservice.exeption.UnauthorizedException;
 import sanotesnoteservice.model.NoteContainerModel;
@@ -21,7 +20,7 @@ import sanotesnoteservice.service.NoteService;
 import java.util.List;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+
 @Service
 public class NoteServiceImpl implements NoteService {
 
@@ -33,9 +32,21 @@ public class NoteServiceImpl implements NoteService {
 
     private final ModelMapper modelMapper;
 
-    private final NoteBookClient noteBookClient;
+    private final ApiGatewayClient apiGatewayClient;
+
 
     private static final String USER_DONT_HAVE_PERMISSION = "User don't have permission for this request";
+
+    public NoteServiceImpl(NoteRepository noteRepository, NoteContainerRepository noteContainerRepository, NoteVersionRepository noteVersionRepository, ModelMapper modelMapper, ApiGatewayClient apiGatewayClient) {
+        this.noteRepository = noteRepository;
+        this.noteContainerRepository = noteContainerRepository;
+        this.noteVersionRepository = noteVersionRepository;
+        this.modelMapper = modelMapper;
+        TypeMap<NoteContainerModel, NoteVersionModel> propertyMapper =
+                this.modelMapper.createTypeMap(NoteContainerModel.class, NoteVersionModel.class);
+        propertyMapper.addMapping(NoteContainerModel::getId, NoteVersionModel::setNoteContainerId);
+        this.apiGatewayClient = apiGatewayClient;
+    }
 
 
     public NoteContainerModel saveNote(NoteContainerModel noteContainerModel, String userId) {
@@ -43,11 +54,18 @@ public class NoteServiceImpl implements NoteService {
                 .topic(noteContainerModel.getTopic())
                 .text(noteContainerModel.getText())
                 .build();
-        BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
+        BooleanResponse booleanResponse = apiGatewayClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
         if (booleanResponse.getResult() == null)
             throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
         if (!booleanResponse.getResult())
             throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
+        for (UUID tagId : noteContainerModel.tags) {
+            try {
+                apiGatewayClient.getTag(tagId.toString());
+            } catch (ResourceNotFoundException exception) {
+                throw new ResourceNotFoundException("Tag", "by id", tagId.toString());
+            }
+        }
         noteModel = noteRepository.save(noteModel);
         noteContainerModel.setNoteId(noteModel.getId());
         noteContainerModel = noteContainerRepository.save(noteContainerModel);
@@ -60,14 +78,18 @@ public class NoteServiceImpl implements NoteService {
         UUID noteId = noteContainerModel.getId();
         NoteContainerModel oldNoteContainerModel = noteContainerRepository.findById(noteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", noteId.toString()));
-        BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
+        BooleanResponse booleanResponse = apiGatewayClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
         if (booleanResponse.getResult() == null)
             throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
         if (!booleanResponse.getResult())
             throw new UnauthorizedException(USER_DONT_HAVE_PERMISSION);
-        TypeMap<NoteContainerModel, NoteVersionModel> propertyMapper =
-                modelMapper.createTypeMap(NoteContainerModel.class, NoteVersionModel.class);
-        propertyMapper.addMapping(NoteContainerModel::getId, NoteVersionModel::setNoteContainerId);
+        for (UUID tagId : noteContainerModel.tags) {
+            try {
+                apiGatewayClient.getTag(tagId.toString());
+            } catch (ResourceNotFoundException exception) {
+                throw new ResourceNotFoundException("Tag", "by id", tagId.toString());
+            }
+        }
         NoteVersionModel notesVersionModel = modelMapper.map(oldNoteContainerModel, NoteVersionModel.class);
         notesVersionModel.setNoteContainerId(oldNoteContainerModel.getId());
         NoteModel noteModel = NoteModel.builder()
@@ -90,7 +112,7 @@ public class NoteServiceImpl implements NoteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", id.toString()));
         NoteModel noteModel = noteRepository.findById(noteContainerModel.getNoteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", id.toString()));
-        BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
+        BooleanResponse booleanResponse = apiGatewayClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
         if (booleanResponse.getResult() == null)
             throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
         if (!booleanResponse.getResult())
@@ -104,7 +126,7 @@ public class NoteServiceImpl implements NoteService {
     public List<NoteVersionModel> getNoteVersions(UUID id, String userId) {
         List<NoteVersionModel> noteVersionModels = noteVersionRepository.findByNoteContainerIdEquals(id);
         if (!noteVersionModels.isEmpty()) {
-            BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteVersionModels.get(0).getNoteBookId().toString());
+            BooleanResponse booleanResponse = apiGatewayClient.getIsUserOwner(noteVersionModels.get(0).getNoteBookId().toString());
             if (booleanResponse.getResult() == null)
                 throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
             if (!booleanResponse.getResult())
@@ -117,7 +139,7 @@ public class NoteServiceImpl implements NoteService {
     public ApiResponse deleteNote(ByIdRequest byIdRequest, String userId) {
         NoteContainerModel noteContainerModel = noteContainerRepository.findById(byIdRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Note", "by id", byIdRequest.getId().toString()));
-        BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
+        BooleanResponse booleanResponse = apiGatewayClient.getIsUserOwner(noteContainerModel.getNoteBookId().toString());
         if (booleanResponse.getResult() == null)
             throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
         if (!booleanResponse.getResult())
@@ -131,7 +153,7 @@ public class NoteServiceImpl implements NoteService {
     public List<NoteContainerModel> getNotesByNoteBookId(UUID id, String userId) {
         List<NoteContainerModel> noteContainerModel = noteContainerRepository.findByNoteBookIdEquals(id);
         if (!noteContainerModel.isEmpty()) {
-            BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.get(0).getNoteBookId().toString());
+            BooleanResponse booleanResponse = apiGatewayClient.getIsUserOwner(noteContainerModel.get(0).getNoteBookId().toString());
             if (booleanResponse.getResult() == null)
                 throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
             if (!booleanResponse.getResult())
@@ -143,7 +165,7 @@ public class NoteServiceImpl implements NoteService {
     public List<NoteContainerModel> getNotesByTagId(UUID id, String userId) {
         List<NoteContainerModel> noteContainerModel = noteContainerRepository.getByTagId(id);
         if (!noteContainerModel.isEmpty()) {
-            BooleanResponse booleanResponse = noteBookClient.getIsUserOwner(noteContainerModel.get(0).getNoteBookId().toString());
+            BooleanResponse booleanResponse = apiGatewayClient.getIsUserOwner(noteContainerModel.get(0).getNoteBookId().toString());
             if (booleanResponse.getResult() == null)
                 throw new ResourceNotFoundException(booleanResponse.getFallbackMessage());
             if (!booleanResponse.getResult())
