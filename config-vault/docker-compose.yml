@@ -1,0 +1,28 @@
+version: '3'
+services:
+  vault:
+    image: vault:latest
+    container_name: vault
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: c9858719-8008-4564-8d24-5afb6db6ef98
+    ports:
+      - 8200:8200
+
+  setup-vault:
+    image: vault:latest
+    container_name: setup-vault
+    entrypoint: /bin/sh
+    volumes:
+      - './config:/config'
+    environment:
+      VAULT_ADDR: 'http://vault:8200'
+      CONFIG_DIR: '/config'
+    command: >
+      -c "
+      sleep 2;
+      /config/vault-init.sh;
+      "
+    depends_on:
+      - vault

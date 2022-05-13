@@ -1,0 +1,4 @@
+{ 
+    "keycloakCustomProps.admin-user": "adminsanotes",
+    "keycloakCustomProps.admin-password": "admin123"
+}

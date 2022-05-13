@@ -8,8 +8,8 @@ keycloak:
     secret: 0e082231-a70d-48e8-b8a5-fbfb743041b6
 keycloakCustomProps:
   clientId: sanotes-client
-  admin-user: adminsanotes
-  admin-password: admin123
+#  admin-user: adminsanotes
+#  admin-password: admin123
 
 
 #eureka:

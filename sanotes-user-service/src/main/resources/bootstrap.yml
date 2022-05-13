@@ -14,6 +14,13 @@ spring:
           client-id: sanotes-client
           client-secret: 0e082231-a70d-48e8-b8a5-fbfb743041b6
           issuer-uri: http://localhost:8090/auth/realms/sanotes
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: token
+      token: c9858719-8008-4564-8d24-5afb6db6ef98
 
 cors:
   allowedOrigins: '*'

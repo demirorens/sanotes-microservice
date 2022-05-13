@@ -1,0 +1,6 @@
+{ 
+    "spring.datasource.username": "postgres",
+    "spring.datasource.password": "password",
+    "keycloak.custom.adminUser.username": "admin",
+    "keycloak.custom.adminUser.password": "admin"
+}
