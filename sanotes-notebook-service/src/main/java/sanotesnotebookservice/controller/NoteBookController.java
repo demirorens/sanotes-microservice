@@ -1,5 +1,8 @@
 package sanotesnotebookservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -28,8 +31,11 @@ public class NoteBookController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<NoteBookResponse> getNoteBook(@RequestParam(value = "id") UUID id,
-                                                        @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<NoteBookResponse> getNoteBook(
+            @RequestParam(value = "id") UUID id,
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         NoteBookModel noteBookModel = noteBookService.getNoteBook(id, userPrincipal.getName());
         NoteBookResponse noteBookResponse = modelMapper.map(noteBookModel, NoteBookResponse.class);
         return new ResponseEntity<>(noteBookResponse, HttpStatus.OK);
@@ -37,7 +43,10 @@ public class NoteBookController {
 
     @GetMapping("/usernotebooks")
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<List<NoteBookResponse>> getUserNoteBooks(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<List<NoteBookResponse>> getUserNoteBooks(
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         List<NoteBookModel> noteBooks = noteBookService.getUserNoteBooks(userPrincipal.getName());
         List<NoteBookResponse> noteBookResponses = Arrays.asList(modelMapper.map(noteBooks, NoteBookResponse[].class));
         return new ResponseEntity<>(noteBookResponses, HttpStatus.OK);
@@ -45,6 +54,7 @@ public class NoteBookController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<NoteBookResponse> addNoteBook(@Valid @RequestBody NoteBookRequest noteBook) {
         NoteBookModel noteBookModel = modelMapper.map(noteBook, NoteBookModel.class);
         noteBookModel = noteBookService.saveNoteBook(noteBookModel);
@@ -54,8 +64,11 @@ public class NoteBookController {
 
     @PutMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<NoteBookResponse> updateNoteBook(@Valid @RequestBody NoteBookRequest noteBook,
-                                                           @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<NoteBookResponse> updateNoteBook(
+            @Valid @RequestBody NoteBookRequest noteBook,
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         NoteBookModel noteBookModel = modelMapper.map(noteBook, NoteBookModel.class);
         noteBookModel = noteBookService.updateNoteBook(noteBookModel, userPrincipal.getName());
         NoteBookResponse noteBookResponse = modelMapper.map(noteBookModel, NoteBookResponse.class);
@@ -65,16 +78,22 @@ public class NoteBookController {
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<ApiResponse> deleteNoteBook(@Valid @RequestBody ByIdRequest byIdRequest,
-                                                      @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<ApiResponse> deleteNoteBook(
+            @Valid @RequestBody ByIdRequest byIdRequest,
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         ApiResponse apiResponse = noteBookService.deleteNoteBook(byIdRequest, userPrincipal.getName());
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @GetMapping("/owner/{noteBookId}")
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<BooleanResponse> isNoteBookOwner(@PathVariable("noteBookId") UUID id,
-                                                           @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<BooleanResponse> isNoteBookOwner(
+            @PathVariable("noteBookId") UUID id,
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         BooleanResponse booleanResponse = new BooleanResponse(true);
         try {
             NoteBookModel noteBookModel = noteBookService.getNoteBook(id, userPrincipal.getName());

@@ -16,40 +16,61 @@ spring:
         - id: note-service
           uri: lb://note-service
           predicates:
-            - Path=/api/note/**
+            - Path=/note/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - name: CircuitBreaker
               args:
                 name: notesServiceCB
-                fallbackUri: forward:/api/gateway/note-fallback
+                fallbackUri: forward:/gateway/note-fallback
         - id: notebook-service
           uri: lb://notebook-service
           predicates:
-            - Path=/api/notebook/**
+            - Path=/notebook/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - name: CircuitBreaker
               args:
                 name: noteBookServiceCB
-                fallbackUri: forward:/api/gateway/notebook-fallback
+                fallbackUri: forward:/gateway/notebook-fallback
         - id: tag-service
           uri: lb://tag-service
           predicates:
-            - Path=/api/tag/**
+            - Path=/tag/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - name: CircuitBreaker
               args:
                 name: tagServiceCB
-                fallbackUri: forward:/api/gateway/tag-fallback
+                fallbackUri: forward:/gateway/tag-fallback
         - id: user-service
           uri: lb://user-service
           predicates:
-            - Path=/api/user/**
+            - Path=/user/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - name: CircuitBreaker
               args:
                 name: userServiceCB
-                fallbackUri: forward:/api/gateway/user-fallback
+                fallbackUri: forward:/gateway/user-fallback
+        - id: openapi
+          uri: http://localhost:${server.port}
+          predicates:
+            - Path=/v3/api-docs/**
+          filters:
+            - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+
+springdoc:
+  packagesToScan: sanotesapigateway
+  swagger-ui:
+    urls:
+      - name: user
+        url: /v3/api-docs/user
+      - name: notebook
+        url: /v3/api-docs/notebook
+      - name: note
+        url: /v3/api-docs/note
+      - name: tag
+        url: /v3/api-docs/tag
+      - name: gateway
+        url: /v3/api-docs/

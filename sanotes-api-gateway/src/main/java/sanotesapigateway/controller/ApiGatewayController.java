@@ -1,5 +1,8 @@
 package sanotesapigateway.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
@@ -26,7 +29,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/gateway")
+@RequestMapping("/gateway")
 public class ApiGatewayController {
 
     private final NoteServiceClient noteServiceClient;
@@ -41,7 +44,12 @@ public class ApiGatewayController {
 
     @GetMapping("useritems")
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public Mono<UserItemsResponse> getUserItems(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(summary = "Get User Items",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            tags = {"useritems"})
+    public Mono<UserItemsResponse> getUserItems(
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
 
         Mono<UserItemsResponse> userItemsResponse = userServiceClient.getUser()
                 .transform(it -> {
@@ -101,12 +109,14 @@ public class ApiGatewayController {
     }
 
     @GetMapping("principle")
+    @Operation(hidden = true)
     public Mono<OAuth2AuthenticatedPrincipal> getPrinciple(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(ctx -> ((OAuth2AuthenticatedPrincipal) ctx.getAuthentication().getPrincipal()));
     }
 
     @GetMapping("authentication")
+    @Operation(hidden = true)
     public Mono<String> getAuthentication(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(ctx -> ((AbstractOAuth2TokenAuthenticationToken) ctx.getAuthentication()).getToken().getTokenValue());
@@ -118,24 +128,28 @@ public class ApiGatewayController {
 
     @RequestMapping("user-fallback")
     @PreAuthorize("hasAuthority('sanotes_user')")
+    @Operation(hidden = true)
     public Mono<FallBackResponse> getUserFallback() {
         return Mono.just(new FallBackResponse("User service can not respond at the moment please try again later." + getTime()));
     }
 
     @RequestMapping("note-fallback")
     @PreAuthorize("hasAuthority('sanotes_user')")
+    @Operation(hidden = true)
     public Mono<FallBackResponse> getNoteFallback() {
         return Mono.just(new FallBackResponse("Note service can not respond at the moment please try again later." + getTime()));
     }
 
     @RequestMapping("notebook-fallback")
     @PreAuthorize("hasAuthority('sanotes_user')")
+    @Operation(hidden = true)
     public Mono<FallBackResponse> getNoteBookFallback() {
         return Mono.just(new FallBackResponse("Note Book service can not respond at the moment please try again later." + getTime()));
     }
 
     @RequestMapping("tag-fallback")
     @PreAuthorize("hasAuthority('sanotes_user')")
+    @Operation(hidden = true)
     public Mono<FallBackResponse> getTagFallback() {
         return Mono.just(new FallBackResponse("Tag service can not respond at the moment please try again later." + getTime()));
     }

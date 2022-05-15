@@ -11,6 +11,8 @@ keycloakCustomProps:
 #  admin-user: adminsanotes
 #  admin-password: admin123
 
+springdoc:
+  packagesToScan: sanotesuserservice
 
 #eureka:
 #  instance:

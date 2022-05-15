@@ -1,5 +1,10 @@
 package sanotesnoteservice;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.modelmapper.ModelMapper;
@@ -24,6 +29,14 @@ import java.util.TimeZone;
 @EnableJpaRepositories
 @EnableFeignClients
 @SpringBootApplication
+@SecurityScheme(name = "bearerAuth",
+        scheme = "bearer",
+        bearerFormat = "JWT",
+        type = SecuritySchemeType.HTTP,
+        in = SecuritySchemeIn.HEADER)
+@OpenAPIDefinition(info =
+    @Info(title = "Note API", version = "1.0", description = "Documentation of Note API v1.0")
+)
 public class SanotesNoteServiceApplication {
 
     public static void main(String[] args) {

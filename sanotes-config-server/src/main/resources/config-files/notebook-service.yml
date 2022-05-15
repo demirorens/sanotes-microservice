@@ -14,6 +14,9 @@ spring:
       ddl-auto: update
     show-sql: true
 
+springdoc:
+  packagesToScan: sanotesnotebookservice
+
 #eureka:
 #  instance:
     # enable to register multiple app instances with a random server port

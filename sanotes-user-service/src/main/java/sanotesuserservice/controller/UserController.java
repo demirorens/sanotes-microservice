@@ -1,5 +1,8 @@
 package sanotesuserservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.modelmapper.ModelMapper;
@@ -28,6 +31,7 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('sanotes_admin')")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<UserResponse> addUser(@RequestBody UserRequest userRequest) {
         UserModel userModel = modelMapper.map(userRequest, UserModel.class);
         userModel = userService.addUser(userModel);
@@ -37,6 +41,7 @@ public class UserController {
 
     @GetMapping(path = "/byUserName/{userName}")
     @PreAuthorize("hasAuthority('sanotes_admin')")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<List<UserDetailResponse>> getUserByUserName(@PathVariable("userName") String userName) {
         List<UserRepresentation> users = userService.getUserByUserName(userName);
         List<UserDetailResponse> userResponses = Arrays.asList(modelMapper.map(users, UserDetailResponse[].class));
@@ -45,6 +50,7 @@ public class UserController {
 
     @GetMapping(path = "/byUserId/{userId}")
     @PreAuthorize("hasAuthority('sanotes_admin')")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<UserDetailResponse> getUserById(@PathVariable("userId") String userId) {
         UserRepresentation user = userService.getUserById(userId);
         UserDetailResponse userResponse = modelMapper.map(user, UserDetailResponse.class);
@@ -53,7 +59,10 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<UserResponse> getSelf(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<UserResponse> getSelf(
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         UserRepresentation user = userService.getUserById(userPrincipal.getName());
         UserResponse userResponse = modelMapper.map(user, UserResponse.class);
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
@@ -61,6 +70,7 @@ public class UserController {
 
     @PutMapping
     @PreAuthorize("hasAuthority('sanotes_admin')")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<UserResponse> updateUser(@RequestBody UserRequest userRequest) {
         UserModel userModel = modelMapper.map(userRequest, UserModel.class);
         userModel = userService.updateUser(userModel);
@@ -70,6 +80,7 @@ public class UserController {
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('sanotes_admin')")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse> deleteUser(@RequestBody ByIdRequest request) {
         ApiResponse apiResponse = userService.deleteUser(request.getId());
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
@@ -77,6 +88,7 @@ public class UserController {
 
     @GetMapping(path = "/verification-link/{userId}")
     @PreAuthorize("hasAuthority('sanotes_admin')")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse> sendVerificationLink(@PathVariable("userId") String userId) {
         ApiResponse apiResponse = userService.sendVerificationLink(userId);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
@@ -84,6 +96,7 @@ public class UserController {
 
     @GetMapping(path = "/reset-password/{userId}")
     @PreAuthorize("hasAuthority('sanotes_admin')")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<ApiResponse> sendResetPassword(@PathVariable("userId") String userId) {
         ApiResponse apiResponse = userService.sendResetPassword(userId);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);

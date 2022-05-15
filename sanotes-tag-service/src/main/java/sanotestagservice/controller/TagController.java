@@ -1,5 +1,8 @@
 package sanotestagservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -31,6 +34,7 @@ public class TagController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<TagResponse> addTag(@Valid @RequestBody TagRequest tag) {
         TagModel tagModel = modelMapper.map(tag, TagModel.class);
         tagModel = tagService.saveTag(tagModel);
@@ -40,8 +44,11 @@ public class TagController {
 
     @PutMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<TagResponse> updateTag(@Valid @RequestBody TagRequest tag,
-                                                 @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<TagResponse> updateTag(
+            @Valid @RequestBody TagRequest tag,
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         TagModel tagModel = modelMapper.map(tag, TagModel.class);
         tagModel = tagService.updateTag(tagModel, userPrincipal.getName());
         TagResponse tagResponse = modelMapper.map(tagModel, TagResponse.class);
@@ -50,8 +57,11 @@ public class TagController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<TagResponse> getTag(@RequestParam(value = "id") UUID id,
-                                              @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<TagResponse> getTag(
+            @RequestParam(value = "id") UUID id,
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         TagModel tagModel = tagService.getTag(id, userPrincipal.getName());
         TagResponse tagResponse = modelMapper.map(tagModel, TagResponse.class);
         return new ResponseEntity<>(tagResponse, HttpStatus.OK);
@@ -59,7 +69,10 @@ public class TagController {
 
     @GetMapping("/usertags")
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<List<TagResponse>> getUserTags(@CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<List<TagResponse>> getUserTags(
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         List<TagModel> tags = tagService.getUserTags(userPrincipal.getName());
         List<TagResponse> tagResponses = Arrays.asList(modelMapper.map(tags, TagResponse[].class));
         return new ResponseEntity<>(tagResponses, HttpStatus.OK);
@@ -67,8 +80,11 @@ public class TagController {
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('sanotes_user')")
-    public ResponseEntity<ApiResponse> deleteTag(@Valid @RequestBody ByIdRequest byIdRequest,
-                                                 @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<ApiResponse> deleteTag(
+            @Valid @RequestBody ByIdRequest byIdRequest,
+            @Parameter(hidden = true)
+            @CurrentUser OAuth2AuthenticatedPrincipal userPrincipal) {
         ApiResponse apiResponse = tagService.deleteTag(byIdRequest, userPrincipal.getName());
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }

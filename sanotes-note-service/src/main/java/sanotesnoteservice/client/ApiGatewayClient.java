@@ -10,9 +10,9 @@ import sanotesnoteservice.payload.TagResponse;
 @FeignClient(name = "api-gateway")
 public interface ApiGatewayClient {
 
-    @GetMapping("/api/notebook/owner/{noteBookId}")
+    @GetMapping("/notebook/owner/{noteBookId}")
     BooleanResponse getIsUserOwner(@PathVariable("noteBookId") String noteBookId);
 
-    @GetMapping("/api/tag")
+    @GetMapping("/tag")
     TagResponse getTag(@RequestParam("id") String tagId);
 }

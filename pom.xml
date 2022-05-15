@@ -30,6 +30,7 @@
         <jjwt.version>0.9.1</jjwt.version>
         <spring-boot-admin.version>2.6.3</spring-boot-admin.version>
         <embedded-keycloak-starter.version>7.0.2</embedded-keycloak-starter.version>
+        <springdoc-openapi.version>1.6.8</springdoc-openapi.version>
     </properties>
 
     <modules>
