@@ -1,5 +1,3 @@
-server:
-  port: 8585
 keycloak:
   auth-server-url: http://localhost:8090/auth
   realm: sanotes
@@ -14,7 +12,23 @@ keycloakCustomProps:
 springdoc:
   packagesToScan: sanotesuserservice
 
-#eureka:
-#  instance:
+eureka:
+  instance:
     # enable to register multiple app instances with a random server port
-#    instance-id: ${spring.application.name}:${random.uuid}
+    instance-id: ${spring.application.name}:${random.uuid}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  zipkin:
+    baseUrl: http://tracing-server:9411
+server:
+  port: 8585
+keycloak:
+  auth-server-url: http://oauth2-server:8090/auth
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery-server:8761/eureka/

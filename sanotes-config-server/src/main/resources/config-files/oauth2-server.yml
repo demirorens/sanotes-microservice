@@ -22,8 +22,22 @@ keycloak:
     adminUser:
 #      username: admin
 #      password: admin
-#      create-admin-user-enabled: true
+      create-admin-user-enabled: true
 #    migration:
 #      importProvider: singleFile
 #      importLocation: classpath:sanotes-realm.json
 
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  zipkin:
+    baseUrl: http://tracing-server:9411
+server:
+  port: 8090
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery-server:8761/eureka/
