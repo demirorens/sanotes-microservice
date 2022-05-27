@@ -74,3 +74,10 @@ springdoc:
         url: /v3/api-docs/tag
       - name: gateway
         url: /v3/api-docs/
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+    import: configserver:http://config-server:8888

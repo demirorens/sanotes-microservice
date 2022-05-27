@@ -31,7 +31,7 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/openapi/**").permitAll()
                 .pathMatchers(HttpMethod.GET, "/actuator/**").permitAll()
-                .pathMatchers(HttpMethod.POST, "/api/user/auth/**").permitAll()
+                .pathMatchers(HttpMethod.POST, "/user/auth/**").permitAll()
                 .pathMatchers(HttpMethod.GET, "/user/v3/api-docs/**").permitAll()
                 .pathMatchers(HttpMethod.GET, "/tag/v3/api-docs/**").permitAll()
                 .pathMatchers(HttpMethod.GET, "/note/v3/api-docs/**").permitAll()

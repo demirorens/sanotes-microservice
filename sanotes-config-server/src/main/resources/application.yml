@@ -1,5 +1,5 @@
-server.port: 8888
-
+server:
+  port: 8888
 spring:
   profiles:
     include: native
@@ -7,10 +7,36 @@ spring:
     config:
       server:
 #        git:
-#          uri: https://github.com/demirorens/sanotes-config-repo
+#          uri: https://github.com/demirorens/sanotes-microservice_config_files
 #          username: github_username
 #          password: github_password
 #          clone-on-start: true
 #          default-label: main
         native:
           search-locations: classpath:/config-files
+    bus:
+      enabled: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  security:
+    enabled: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest

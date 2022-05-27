@@ -24,3 +24,19 @@ spring:
 
 cors:
   allowedOrigins: '*'
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+    import: configserver:http://config-server:8888
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: http://oauth2-server:8090/auth/realms/sanotes/protocol/openid-connect/token/introspect
+          issuer-uri: http://oauth2-server:8090/auth/realms/sanotes
+    cloud:
+      vault:
+        host: vault

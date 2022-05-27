@@ -1,0 +1,70 @@
+# COMMON APPLICATION PROPERTIES
+
+server:
+  # start services on random port by default
+  port: 0
+  # The stop processing uses a timeout which provides a grace period during which existing requests will be allowed to complete but no new requests will be permitted
+  shutdown: graceful
+
+# embedded database init, supports mysql too trough the 'mysql' spring profile
+spring:
+  sleuth:
+    sampler:
+      probability: 1.0
+  cloud:
+    config:
+      # Allow the microservices to override the remote properties with their own System properties or config file
+      allow-override: true
+      # Override configuration with any local property source
+      override-none: true
+
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: token
+      token: c9858719-8008-4564-8d24-5afb6db6ef98
+    bus:
+      enabled: true
+      refresh:
+        enabled: true
+      config:
+        fail-fast: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+# Enable all Actuators and not only the two available by default /health and /info starting Spring Boot 2.0
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  security:
+    enabled: false
+
+# Logging
+logging:
+  level:
+    org:
+      springframework: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  cloud:
+    vault:
+      host: vault
+      port: 8200
+      scheme: http
+      authentication: token
+      token: c9858719-8008-4564-8d24-5afb6db6ef98
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest

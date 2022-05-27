@@ -28,13 +28,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String token = getJwtFromRequest(request);
             if (token != null && !token.isEmpty()) {
-                Enumeration<String> stringEnumeration = request.getHeaderNames();
-                while (stringEnumeration.hasMoreElements()) {
-                    String s = stringEnumeration.nextElement();
-                    System.out.println(s + " : " + request.getHeader(s));
-                }
-                OAuth2AuthenticatedPrincipal principal = introspector.introspect(token);
-//                System.out.println("TOKEN: " + token);
+//                Enumeration<String> stringEnumeration = request.getHeaderNames();
+//                while (stringEnumeration.hasMoreElements()) {
+//                    String s = stringEnumeration.nextElement();
+//                    System.out.println(s + " : " + request.getHeader(s));
+//                }
+//                OAuth2AuthenticatedPrincipal principal = introspector.introspect(token);
+////                System.out.println("TOKEN: " + token);
             }
         } catch (Exception e) {
             LOGGER.error("Could not set user authentication in security context", e);

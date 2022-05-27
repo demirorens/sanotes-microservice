@@ -10,3 +10,13 @@ spring:
       scheme: http
       authentication: token
       token: c9858719-8008-4564-8d24-5afb6db6ef98
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+    import: configserver:http://config-server:8888
+    cloud:
+      vault:
+        host: vault

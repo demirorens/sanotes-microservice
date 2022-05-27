@@ -1,0 +1,132 @@
+version: '3'
+
+services:
+  vault:
+    image: vault:latest
+    container_name: vault
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: c9858719-8008-4564-8d24-5afb6db6ef98
+    ports:
+      - 8200:8200
+    networks:
+      - backend
+
+  setup-vault:
+    image: vault:latest
+    container_name: setup-vault
+    entrypoint: /bin/sh
+    volumes:
+      - './config-vault/config:/config'
+    environment:
+      VAULT_ADDR: 'http://vault:8200'
+      CONFIG_DIR: '/config'
+    networks:
+      - backend
+    command: >
+      -c "
+      sleep 2;
+      /config/vault-init.sh;
+      "
+    depends_on:
+      - vault
+
+  db:
+    image: postgres:alpine
+    container_name: sanotes-microservice-db
+    restart: always
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=sanotes_tagdb,sanotes_oauthdb,sanotes_notebookdb,sanotes_notedb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - '5432:5432'
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    volumes:
+      - C:\docker\volumes\sanotes-microservice-db:/var/lib/postgresql/data
+      - ./config-db:/docker-entrypoint-initdb.d
+
+  mongo:
+    image: mongo:latest
+    container_name: sanotes-mongo-db
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: 'sanotes'
+    ports:
+      - 27017:27017
+    networks:
+      - backend
+    volumes:
+      - C:\docker\volumes\sanotes-microservice-mongo-db:/var/lib/mongo/data
+
+  tracing-server:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    environment:
+      - STORAGE_TYPE=mem
+      # Uncomment to disable scribe
+      # - SCRIBE_ENABLED=false
+      # Uncomment to enable self-tracing
+      # - SELF_TRACING_ENABLED=true
+      # Uncomment to enable debug logging
+      # - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG
+    ports:
+      # Port used for the Zipkin UI and HTTP Api
+      - 9411:9411
+    networks:
+      - backend
+
+  config-server:
+    container_name: config-server
+    build: ./sanotes-config-server
+    restart: always
+    ports:
+      - "8888:8888"
+    networks:
+      - backend
+
+  discovery-server:
+    container_name: discovery-server
+    build: ./sanotes-discovery-server
+    restart: always
+    ports:
+      - "8761:8761"
+    networks:
+      - backend
+
+  admin-server:
+    container_name: admin-server
+    build: ./sanotes-admin-server
+    restart: always
+    ports:
+      - "9090:9090"
+    networks:
+      - backend
+
+  oauth2-server:
+    container_name: oauth2-server
+    build: ./sanotes-oauth2-server
+    restart: always
+    ports:
+      - "8090:8090"
+    networks:
+      - backend
+
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+volumes:
+  sanotes-microservice-db:
+    driver: local
+  sanotes-microservice-mongo-db:
+    driver: local

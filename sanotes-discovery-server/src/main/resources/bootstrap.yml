@@ -11,3 +11,9 @@ logging:
       springframework:
         boot: INFO
         web: INFO
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+    import: configserver:http://config-server:8888
