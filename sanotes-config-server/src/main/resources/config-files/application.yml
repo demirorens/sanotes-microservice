@@ -22,8 +22,10 @@ spring:
       host: localhost
       port: 8200
       scheme: http
-      authentication: token
+      authentication: TOKEN
       token: c9858719-8008-4564-8d24-5afb6db6ef98
+      config:
+        order: -10
     bus:
       enabled: true
       refresh:
@@ -35,6 +37,14 @@ spring:
     port: 5672
     username: guest
     password: guest
+
+cors:
+  allowedOrigins: '*'
+
+eureka:
+  instance:
+    # enable to register multiple app instances with a random server port
+    instance-id: ${spring.application.name}:${random.uuid}
 
 # Enable all Actuators and not only the two available by default /health and /info starting Spring Boot 2.0
 management:
@@ -68,3 +78,9 @@ spring:
     port: 5672
     username: guest
     password: guest
+  zipkin:
+    baseUrl: http://tracing-server:9411
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery-server:8761/eureka/

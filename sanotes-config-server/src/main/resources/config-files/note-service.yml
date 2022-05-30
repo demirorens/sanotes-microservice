@@ -19,21 +19,10 @@ spring:
 springdoc:
   packagesToScan: sanotesnoteservice
 
-eureka:
-  instance:
-    # enable to register multiple app instances with a random server port
-    instance-id: ${spring.application.name}:${random.uuid}
-
 ---
 spring:
   config:
     activate:
       on-profile: docker
-  zipkin:
-    baseUrl: http://tracing-server:9411
 server:
   port: 8282
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://discovery-server:8761/eureka/

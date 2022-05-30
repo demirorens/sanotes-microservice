@@ -5,7 +5,7 @@ spring:
   application:
     name: notebook-service
   config:
-    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888/}
+    import: configserver:http://localhost:8888?fail-fast=true&max-attempts=10&max-interval=3000&multiplier=1.3&initial-interval=2000
   security:
     oauth2:
       resourceserver:
@@ -14,29 +14,16 @@ spring:
           client-id: sanotes-client
           client-secret: 0e082231-a70d-48e8-b8a5-fbfb743041b6
           issuer-uri: http://localhost:8090/auth/realms/sanotes
-  cloud:
-    vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: token
-      token: c9858719-8008-4564-8d24-5afb6db6ef98
-
-cors:
-  allowedOrigins: '*'
 
 ---
 spring:
   config:
     activate:
       on-profile: docker
-    import: configserver:http://config-server:8888
+    import: configserver:http://config-server:8888?fail-fast=true&max-attempts=10&max-interval=3000&multiplier=1.3&initial-interval=2000
   security:
     oauth2:
       resourceserver:
         opaquetoken:
           introspection-uri: http://oauth2-server:8090/auth/realms/sanotes/protocol/openid-connect/token/introspect
           issuer-uri: http://oauth2-server:8090/auth/realms/sanotes
-    cloud:
-      vault:
-        host: vault
