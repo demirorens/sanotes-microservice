@@ -3,6 +3,12 @@ spring:
     name: admin-server
   config:
     import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888/}
+    failFast: true
+      retry:
+        initialInterval: 3000
+        multiplier: 1.3
+        maxInterval: 10000
+        maxAttempts: 20
 
 ---
 spring:
