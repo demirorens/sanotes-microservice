@@ -2,11 +2,11 @@ spring:
   application:
     name: admin-server
   config:
-    import: configserver:http://localhost:8888?fail-fast=true&max-attempts=10&max-interval=3000&multiplier=1.3&initial-interval=2000
+    import: configserver:http://localhost:8888
 
 ---
 spring:
   config:
     activate:
       on-profile: docker
-    import: configserver:http://config-server:8888?fail-fast=true&max-attempts=10&max-interval=3000&multiplier=1.3&initial-interval=2000
+    import: configserver:http://config-server:8888

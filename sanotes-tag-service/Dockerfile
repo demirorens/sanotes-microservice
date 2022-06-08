@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine
+FROM openjdk:17-alpine
 VOLUME /tmp
 RUN addgroup -S sanotes && adduser -S sanotes -G sanotes
 USER sanotes:sanotes

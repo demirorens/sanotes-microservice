@@ -35,8 +35,8 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: guest
-    password: guest
+#    username: guest
+#    password: guest
 
 cors:
   allowedOrigins: '*'
@@ -76,8 +76,8 @@ spring:
   rabbitmq:
     host: rabbitmq
     port: 5672
-    username: guest
-    password: guest
+#    username: guest
+#    password: guest
   zipkin:
     baseUrl: http://tracing-server:9411
 eureka:
